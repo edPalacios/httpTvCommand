@@ -1,0 +1,41 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+
+#IntelliJ IDEA#
+###############
+*.ipr
+*.iws
+.idea
+target
+classes
+captures/*
+
+#Gradle#
+#########
+build/*
+*/build/*
+
+# Various file OS based formats#
+################################
+*Thumbs.db
+*.swp
+.DS_STORE
+lint-report.xml
+*.log
+
+# trace files
+*.trace
