@@ -28,6 +28,15 @@ object Libs {
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
     }
 
+    object Network {
+
+        object Okhttp {
+            private const val okhttpVersion = "4.9.0"
+            const val okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
+            const val okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+        }
+    }
+
     object AndroidX {
         const val appcompat = "androidx.appcompat:appcompat:1.3.0"
         const val coreKtx = "androidx.core:core-ktx:1.6.0-beta02"

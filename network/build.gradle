@@ -14,6 +14,8 @@ dependencies {
 
     implementation Libs.Kotlin.stdlib
     implementation Libs.Coroutines.core
+    implementation Libs.Network.Okhttp.okhttp
+    implementation Libs.Network.Okhttp.okhttpLoggingInterceptor
 
     testImplementation Libs.junit
     testImplementation Libs.mockito
