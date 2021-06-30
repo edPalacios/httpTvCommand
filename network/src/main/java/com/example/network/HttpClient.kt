@@ -1,20 +1,12 @@
 package com.example.network
 
-import okhttp3.*
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaType
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.OutputStream
-import java.io.OutputStreamWriter
-import java.net.URL
-import javax.net.ssl.HttpsURLConnection
-
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.http.RetryAndFollowUpInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.Request as OkRequest
 import java.util.concurrent.TimeUnit.SECONDS
+import okhttp3.Request as OkRequest
 
 
 data class Request(
