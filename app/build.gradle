@@ -10,7 +10,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.httptvcommand"
+        applicationId "com.example.remotehttpcommand"
         minSdk 23
         targetSdk 30
         versionCode 1
