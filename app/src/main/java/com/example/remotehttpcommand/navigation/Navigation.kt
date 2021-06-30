@@ -1,4 +1,4 @@
-package com.example.httptvcommand.navigation
+package com.example.remotehttpcommand.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController

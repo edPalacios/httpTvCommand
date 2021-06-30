@@ -1,4 +1,4 @@
-package com.example.httptvcommand.navigation
+package com.example.remotehttpcommand.navigation
 
 import androidx.compose.material.Button
 import androidx.compose.material.Text

@@ -1,4 +1,4 @@
-package com.example.httptvcommand.ui.theme
+package com.example.remotehttpcommand.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
