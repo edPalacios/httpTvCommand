@@ -1,4 +1,4 @@
-
+import org.junit.Test
 
 class HttpClientTest {
     @Test
