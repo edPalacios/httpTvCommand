@@ -1,0 +1,19 @@
+import com.example.buildsrc.Libs
+
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+
+    implementation Libs.Network.Retrofit.retrofit
+    implementation Libs.Network.Okhttp.okhttp
+    implementation Libs.Network.Okhttp.okhttpLoggingInterceptor
+
+}

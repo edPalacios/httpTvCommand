@@ -81,4 +81,17 @@ object Libs {
             const val viewModelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07"
         }
     }
+
+    object Network {
+        object Retrofit {
+            private const val retrofitVersion = "2.8.1"
+            const val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
+        }
+
+        object Okhttp {
+            private const val okhttpVersion = "4.9.0"
+            const val okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
+            const val okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+        }
+    }
 }

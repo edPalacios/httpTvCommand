@@ -48,6 +48,8 @@ android {
 
 dependencies {
 
+    implementation project(":network")
+
     implementation Libs.Kotlin.stdlib
     implementation Libs.Coroutines.android
 

@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "HttpTvCommand"
 include ':app'
+include ':network'
