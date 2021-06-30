@@ -12,8 +12,7 @@ java {
 
 dependencies {
 
-    implementation Libs.Network.Retrofit.retrofit
-    implementation Libs.Network.Okhttp.okhttp
-    implementation Libs.Network.Okhttp.okhttpLoggingInterceptor
+    implementation Libs.Kotlin.stdlib
+    implementation Libs.Coroutines.android
 
 }
