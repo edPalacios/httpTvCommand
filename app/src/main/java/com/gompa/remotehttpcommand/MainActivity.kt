@@ -1,4 +1,4 @@
-package com.example.remotehttpcommand
+package com.gompa.remotehttpcommand
 
 import android.R
 import android.os.Bundle
@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.example.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
+import com.gompa.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {

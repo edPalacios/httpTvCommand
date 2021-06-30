@@ -1,4 +1,4 @@
-package com.example.remotehttpcommand.ui.theme
+package com.gompa.remotehttpcommand.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

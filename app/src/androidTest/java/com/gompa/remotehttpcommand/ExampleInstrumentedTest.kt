@@ -1,4 +1,4 @@
-package com.example.remotehttpcommand
+package com.gompa.remotehttpcommand
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,4 +1,4 @@
-package com.example.buildsrc
+package com.gompa.buildsrc
 
 object Libs {
     const val androidGradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha02"
@@ -59,7 +59,7 @@ object Libs {
             const val test = "androidx.compose.ui:ui-test:$version"
             const val ui = "ndroidx.compose.ui:ui:$version"
             const val uiTest = "androidx.compose.ui:ui-test-junit4:$version"
-            const val uiUtil = "androidx.compose.ui:ui-util:${version}"
+            const val uiUtil = "androidx.compose.ui:ui-util:$version"
             const val viewBinding = "androidx.compose.ui:ui-viewbinding:$version"
             const val navigation = "androidx.navigation:navigation-compose:2.4.0-alpha03"
         }

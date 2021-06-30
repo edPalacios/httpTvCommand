@@ -1,5 +1,7 @@
-import com.example.network.Request
-import com.example.network.executeOkHttp
+package com.gompa.network
+
+import com.gompa.network.Request
+import com.gompa.network.executeOkHttp
 import org.junit.Test
 
 class HttpClientTest {

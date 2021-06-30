@@ -1,4 +1,4 @@
-import com.example.buildsrc.Libs
+import com.gompa.buildsrc.Libs
 
 plugins {
     id 'com.android.application'

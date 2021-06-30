@@ -1,4 +1,4 @@
-package com.example.remotehttpcommand.navigation
+package com.gompa.remotehttpcommand.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
