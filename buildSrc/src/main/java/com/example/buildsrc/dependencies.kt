@@ -5,6 +5,7 @@ object Libs {
     const val jdkDesugar = "com.android.tools:desugar_jdk_libs:1.0.9"
 
     const val junit = "junit:junit:4.13"
+    const val mockito = "org.mockito:mockito-core:3.9.0"
 
     const val material = "com.google.android.material:material:1.3.0"
 
