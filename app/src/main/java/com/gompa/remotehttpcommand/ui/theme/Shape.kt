@@ -1,4 +1,4 @@
-package com.example.httptvcommand.ui.theme
+package com.gompa.remotehttpcommand.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

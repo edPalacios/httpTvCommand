@@ -1,4 +1,4 @@
-package com.example.httptvcommand.ui.theme
+package com.gompa.remotehttpcommand.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

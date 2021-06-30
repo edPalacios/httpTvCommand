@@ -1,4 +1,4 @@
-package com.example.httptvcommand
+package com.gompa.httptvcommand
 
 import org.junit.Test
 

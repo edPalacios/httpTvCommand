@@ -1,4 +1,4 @@
-package com.example.httptvcommand
+package com.gompa.remotehttpcommand
 
 import android.R
 import android.os.Bundle
@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.example.httptvcommand.ui.theme.HttpTvCommandTheme
+import com.gompa.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            HttpTvCommandTheme {
+            RemoteHttpCommandTheme {
                 // A surface container using the 'background' color from the theme
 //                Surface(color = MaterialTheme.colors.background) {
                     Grid()
@@ -82,7 +82,7 @@ fun Grid() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    HttpTvCommandTheme {
+    RemoteHttpCommandTheme {
         Grid()
     }
 }

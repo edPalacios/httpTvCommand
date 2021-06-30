@@ -1,4 +1,4 @@
-package com.example.network
+package com.gompa.network
 
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaType
