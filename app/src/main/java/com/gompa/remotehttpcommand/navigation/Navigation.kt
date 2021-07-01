@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun Navigation(block: (NavHostController) -> Unit = {}) {
+fun Navigation() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = ScreenDirections.remoteCommand.destination) {
         composable(route = ScreenDirections.remoteCommand.destination) {
@@ -18,6 +18,5 @@ fun Navigation(block: (NavHostController) -> Unit = {}) {
         }
 
     }
-    block(navController)
 }
 
