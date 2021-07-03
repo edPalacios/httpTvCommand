@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,7 +29,7 @@ fun RemoteCommandScreen(
     ) {
         items(100) {
             Icon(
-                imageVector = Icons.Rounded.Add,
+                imageVector = Icons.Default.AddCircle,
                 contentDescription = "Localized description",
                 modifier = Modifier
                     .size(50.dp)
