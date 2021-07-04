@@ -1,4 +1,4 @@
-package com.gompa.remotehttpcommand.navigation
+package com.gompa.remotehttpcommand.screens
 
 import android.content.Context
 import android.widget.Toast
@@ -22,23 +22,28 @@ import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.gompa.remotehttpcommand.navigation.ScreenDirections
 import com.gompa.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
 
 @Composable
-fun HttpEditorScreen(navController: NavController, viewModel: HttpEditorViewModel = viewModel()) {
+fun HttpEditorScreen(navController: NavController, viewModel: HttpEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)) {
 //    Button(onClick = { navController.popBackStack() }) { // TODO handle navigation
 
     val context = LocalContext.current
@@ -53,7 +58,7 @@ fun HttpEditorScreen(navController: NavController, viewModel: HttpEditorViewMode
                 .weight(0.9f)
         ) {
             item {
-                HttpEditorTitleRow()
+                HttpEditorTitleRow(navigationController = navController, viewModel)
                 HttpEditorUrlRow()
                 HttpMethodSelector()
                 HttpCheckBox(text = "Retry")
@@ -96,7 +101,9 @@ fun HttpHeadersRow() {
                     Spacer(Modifier.size(16.dp))
                     Column() {
                         LabeledOutlinedTextField(label = "Name") { header = header.copy(name = it) }
-                        LabeledOutlinedTextField(label = "Value") { header = header.copy(value = it) }
+                        LabeledOutlinedTextField(label = "Value") {
+                            header = header.copy(value = it)
+                        }
                     }
                 },
                 confirmButton = {
@@ -130,7 +137,9 @@ private fun HeaderValue(header: Header, headers: SnapshotStateList<Header>) {
                 .align(Alignment.CenterVertically)
         )
         Icon(Icons.Default.RemoveCircle, contentDescription = "Remove header",
-            Modifier.padding(start = 8.dp).clickable { headers.remove(header) }
+            Modifier
+                .padding(start = 8.dp)
+                .clickable { headers.remove(header) }
         )
     }
 }
@@ -140,7 +149,7 @@ private fun AddHeader(isClicked: MutableState<Boolean>, headers: SnapshotStateLi
 
     Row {
         IconButton(onClick = { isClicked.value = !isClicked.value }) {
-            Icon(Icons.Default.AddCircle, contentDescription = "Icon chooser")
+            Icon(Icons.Default.AddCircle, contentDescription = "add_header_icon")
         }
 
         Text(
@@ -180,8 +189,8 @@ fun HttpButton(text: String, context: Context, rowScope: RowScope) {
 }
 
 @Composable
-fun HttpEditorTitleRow() {
-    Row() {
+fun HttpEditorTitleRow(navigationController: NavController, viewModel: HttpEditorViewModel) {
+    Row {
         LabeledOutlinedTextField(label = "Title")
 
         Text(
@@ -189,8 +198,12 @@ fun HttpEditorTitleRow() {
                 .padding(start = 8.dp)
                 .align(Alignment.CenterVertically)
         )
-        IconButton(onClick = { /*TODO("open screen to select icon")*/ }, modifier = Modifier.align(Alignment.CenterVertically)) {
-            Icon(Icons.Default.AddAPhoto, contentDescription = "Icon chooser")
+        IconButton(
+            onClick = { navigationController.navigate(ScreenDirections.iconChooser.destination) },
+            modifier = Modifier.align(Alignment.CenterVertically)
+        ) {
+            val icon by viewModel.icon.observeAsState()
+            Icon(icon ?: Icons.Default.AddAPhoto, contentDescription = "Icon chooser")
         }
     }
 }
@@ -301,7 +314,7 @@ fun DefaultPreview() {
                     .weight(0.9f)
             ) {
                 item {
-                    HttpEditorTitleRow()
+                    HttpEditorTitleRow(rememberNavController(), HttpEditorViewModel(IconRepository))
                     HttpEditorUrlRow()
                     HttpMethodSelector()
                     HttpCheckBox(text = "Retry")
@@ -319,7 +332,8 @@ data class Header(val name: String = "", val value: String = "")
 
 data class MethodItem(val name: String, var isSelected: Boolean = false)
 
-class HttpEditorViewModel() : ViewModel() { // TODO store state in view model and save it in room
+
+class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewModel() {
 
     private val _title = MutableLiveData<String>()
     val title: LiveData<String> = _title
@@ -327,5 +341,33 @@ class HttpEditorViewModel() : ViewModel() { // TODO store state in view model an
     private val _headers = MutableLiveData<List<Header>>()
     val headers: LiveData<List<Header>> = _headers
 
+    val icon: LiveData<ImageVector> = iconRepository.icon
+
+    fun onSaveIcon(icon: ImageVector) { // TODO replace ImageVector
+       iconRepository.onSaveIcon(icon)
+    }
+
+
+}
+
+@Suppress("UNCHECKED_CAST")
+object IconRepositoryViewModelFactory : ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(HttpEditorViewModel::class.java)) {
+            return HttpEditorViewModel(IconRepository) as T
+        }
+        throw IllegalArgumentException("Cannot create view model from class: $modelClass")
+    }
+}
+
+
+// TODO Dummy repository in memory to speed up things. This should be done with Room keeping the ref of the icon from a lib
+object IconRepository : LiveData<ImageVector>() {
+    private val _icon = MutableLiveData<ImageVector>() // TODO replace VectorDrawable
+    val icon: LiveData<ImageVector> = _icon
+
+    fun onSaveIcon(icon: ImageVector) {
+        _icon.value = icon
+    }
 
 }

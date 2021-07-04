@@ -1,4 +1,4 @@
-package com.gompa.remotehttpcommand.navigation
+package com.gompa.remotehttpcommand.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gompa.remotehttpcommand.navigation.ScreenDirections
 
 
 @OptIn(ExperimentalFoundationApi::class)
