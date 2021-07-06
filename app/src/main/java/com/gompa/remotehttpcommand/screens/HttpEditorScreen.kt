@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
@@ -30,6 +31,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
@@ -43,7 +48,10 @@ import com.gompa.remotehttpcommand.navigation.ScreenDirections
 import com.gompa.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
 
 @Composable
-fun HttpEditorScreen(navController: NavController, viewModel: HttpEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)) {
+fun HttpEditorScreen(
+    navController: NavController,
+    viewModel: HttpEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)
+) {
 //    Button(onClick = { navController.popBackStack() }) { // TODO handle navigation
 
     val context = LocalContext.current
@@ -54,8 +62,7 @@ fun HttpEditorScreen(navController: NavController, viewModel: HttpEditorViewMode
     ) {
 
         LazyColumn(
-            Modifier
-                .weight(0.9f)
+            Modifier.weight(0.9f)
         ) {
             item {
                 HttpEditorTitleRow(navigationController = navController, viewModel)
@@ -63,6 +70,7 @@ fun HttpEditorScreen(navController: NavController, viewModel: HttpEditorViewMode
                 HttpMethodSelector()
                 HttpCheckBox(text = "Retry")
                 HttpCheckBox(text = "Follow redirects")
+                HttpTimeout()
                 HttpHeadersRow()
             }
         }
@@ -300,6 +308,26 @@ fun HttpCheckBox(text: String) {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun HttpTimeout() {
+    Spacer(modifier = Modifier.size(16.dp))
+    var timeOut by remember { mutableStateOf("30") }
+    OutlinedTextField(
+        value = timeOut,
+        onValueChange = { timeOut = it },
+        label = { Text(text = "Time out") },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(0.5f),
+        textStyle = TextStyle(textAlign = TextAlign.Center),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        )
+    )
+
+}
+
 @ExperimentalFoundationApi
 @Preview()
 @Composable
@@ -319,6 +347,7 @@ fun DefaultPreview() {
                     HttpMethodSelector()
                     HttpCheckBox(text = "Retry")
                     HttpCheckBox(text = "Follow redirects")
+                    HttpTimeout()
                     HttpHeadersRow()
                 }
             }
@@ -344,7 +373,7 @@ class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewMode
     val icon: LiveData<ImageVector> = iconRepository.icon
 
     fun onSaveIcon(icon: ImageVector) { // TODO replace ImageVector
-       iconRepository.onSaveIcon(icon)
+        iconRepository.onSaveIcon(icon)
     }
 
 
