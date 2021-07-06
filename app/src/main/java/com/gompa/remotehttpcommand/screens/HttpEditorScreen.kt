@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -66,12 +65,12 @@ fun HttpEditorScreen(
         ) {
             item {
                 HttpEditorTitleRow(navigationController = navController, viewModel)
-                HttpEditorUrlRow()
-                HttpMethodSelector()
-                HttpCheckBox(text = "Retry")
-                HttpCheckBox(text = "Follow redirects")
-                HttpTimeout()
-                HttpHeadersRow()
+                HttpEditorUrlRow(viewModel)
+                HttpMethodSelector(viewModel)
+                HttpCheckBox(text = "Retry") { viewModel.onRetryChanged(it) }
+                HttpCheckBox(text = "Follow redirects") { viewModel.onFollowRedirectsChanged(it) }
+                HttpTimeout(viewModel)
+                HttpHeadersRow(viewModel)
             }
         }
         HttpBottomRow(context = context, this)
@@ -81,10 +80,11 @@ fun HttpEditorScreen(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HttpHeadersRow() {
+fun HttpHeadersRow(viewModel: HttpEditorViewModel) {
     Spacer(Modifier.size(16.dp))
 
-    val headers = remember { mutableStateListOf<Header>() }
+    val headers = remember { mutableStateListOf<Header>() } // TODO check if we can get rid of this
+//    val headers : List<Header> by viewModel.headers.observeAsState(emptyList())
     val isClicked = remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -92,11 +92,13 @@ fun HttpHeadersRow() {
             text = "Headers"
         )
 
-        AddHeader(isClicked, headers)
+        AddHeader(isClicked)
         headers.forEach {
-            HeaderValue(header = it, headers = headers)
+            HeaderValue(header = it) {
+                headers.remove(it)
+                viewModel.onHeaderRemoved(it)
+            }
         }
-
 
         AnimatedVisibility(visible = isClicked.value) {
             var header by remember { mutableStateOf(Header()) }
@@ -107,11 +109,9 @@ fun HttpHeadersRow() {
                 },
                 text = {
                     Spacer(Modifier.size(16.dp))
-                    Column() {
+                    Column {
                         LabeledOutlinedTextField(label = "Name") { header = header.copy(name = it) }
-                        LabeledOutlinedTextField(label = "Value") {
-                            header = header.copy(value = it)
-                        }
+                        LabeledOutlinedTextField(label = "Value") { header = header.copy(value = it) }
                     }
                 },
                 confirmButton = {
@@ -119,6 +119,7 @@ fun HttpHeadersRow() {
                         enabled = header.name.isNotBlank() && header.value.isNotBlank(),
                         onClick = {
                             headers.add(header)
+                            viewModel.onHeaderAdded(header)
                             isClicked.value = false
                         }) {
                         Text(text = "Save")
@@ -136,7 +137,7 @@ fun HttpHeadersRow() {
 }
 
 @Composable
-private fun HeaderValue(header: Header, headers: SnapshotStateList<Header>) {
+private fun HeaderValue(header: Header, onHeaderRemoved: () -> Unit) {
     Row(modifier = Modifier.padding(start = 8.dp)) {
         Text(text = header.name, modifier = Modifier.align(Alignment.CenterVertically))
         Text(
@@ -147,13 +148,13 @@ private fun HeaderValue(header: Header, headers: SnapshotStateList<Header>) {
         Icon(Icons.Default.RemoveCircle, contentDescription = "Remove header",
             Modifier
                 .padding(start = 8.dp)
-                .clickable { headers.remove(header) }
+                .clickable { onHeaderRemoved() }
         )
     }
 }
 
 @Composable
-private fun AddHeader(isClicked: MutableState<Boolean>, headers: SnapshotStateList<Header>) {
+private fun AddHeader(isClicked: MutableState<Boolean>) {
 
     Row {
         IconButton(onClick = { isClicked.value = !isClicked.value }) {
@@ -199,7 +200,7 @@ fun HttpButton(text: String, context: Context, rowScope: RowScope) {
 @Composable
 fun HttpEditorTitleRow(navigationController: NavController, viewModel: HttpEditorViewModel) {
     Row {
-        LabeledOutlinedTextField(label = "Title")
+        LabeledOutlinedTextField(label = "Title", storeInput = { viewModel.onTitleChanged(it) })
 
         Text(
             text = "Icon", Modifier
@@ -217,9 +218,12 @@ fun HttpEditorTitleRow(navigationController: NavController, viewModel: HttpEdito
 }
 
 @Composable
-fun HttpEditorUrlRow() {
+fun HttpEditorUrlRow(viewModel: HttpEditorViewModel) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        LabeledOutlinedTextField(label = "Url", modifier = Modifier.fillMaxWidth())
+        LabeledOutlinedTextField(
+            label = "Url",
+            modifier = Modifier.fillMaxWidth(),
+            storeInput = { viewModel.onUrlChanged(it) })
     }
 }
 
@@ -242,7 +246,7 @@ fun LabeledOutlinedTextField(
 }
 
 @Composable
-fun HttpMethodSelector() {
+fun HttpMethodSelector(viewModel: HttpEditorViewModel) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -253,56 +257,66 @@ fun HttpMethodSelector() {
         val list = remember {
             mutableStateOf(
                 listOf(
-                    MethodItem("GET"),
-                    MethodItem("POST"),
-                    MethodItem("PUT"),
-                    MethodItem("PATCH")
+                    MethodItem(Method.GET.name),
+                    MethodItem(Method.POST.name),
+                    MethodItem(Method.PUT.name),
+                    MethodItem(Method.PATCH.name)
                 )
             )
         }
 
         LazyRow(Modifier.align(Alignment.CenterHorizontally)) {
-
             itemsIndexed(items = list.value) { pos, item ->
-                MethodText(item, list)
+                MethodText(item, list, viewModel)
             }
         }
     }
 }
 
+/**
+ * @param list - internal composable state to track the selected item and change color
+ * @param viewModel - screen state holder to host the value of the selected item
+ */
 @Composable
-fun MethodText(item: MethodItem, list: MutableState<List<MethodItem>>) {
+fun MethodText(
+    item: MethodItem,
+    list: MutableState<List<MethodItem>>,
+    viewModel: HttpEditorViewModel
+) {
 
     val color by animateColorAsState(
         targetValue = if (list.value.find { it.name == item.name }?.isSelected == true) Color.Green else Color.LightGray,
         animationSpec = tween(durationMillis = 250)
     )
+
     Box(modifier = Modifier
         .padding(5.dp)
         .border(width = 2.dp, color = color, RoundedCornerShape(corner = CornerSize(20.dp)))
         .background(color = Color.Transparent, shape = RoundedCornerShape(20.dp))
         .clickable {
-            list.value = list.value.map {
-                it.copy(isSelected = it.name == item.name && !item.isSelected)
-            }
+            val isMethodSelected: (MethodItem) -> Boolean =
+                { it.name == item.name && !item.isSelected }
+            list.value = list.value.map { it.copy(isSelected = isMethodSelected(it)) }
+            viewModel.onMethodSelected(list.value.find { isMethodSelected(it) })
         }
     ) {
         Text(
             text = item.name,
-            modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp)
-
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp)
         )
     }
 }
 
 @Composable
-fun HttpCheckBox(text: String) {
+fun HttpCheckBox(text: String, storeState: (Boolean) -> Unit) {
     val isChecked = remember { mutableStateOf(false) }
     Row {
         Checkbox(
             checked = isChecked.value,
-            onCheckedChange = { isChecked.value = it }
+            onCheckedChange = {
+                isChecked.value = it
+                storeState(it)
+            }
         )
         Text(text = text, modifier = Modifier.padding(start = 8.dp))
     }
@@ -310,12 +324,12 @@ fun HttpCheckBox(text: String) {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HttpTimeout() {
+fun HttpTimeout(viewModel: HttpEditorViewModel) {
     Spacer(modifier = Modifier.size(16.dp))
-    var timeOut by remember { mutableStateOf("30") }
+    val timeOut : String by viewModel.timeOut.observeAsState("30")
     OutlinedTextField(
         value = timeOut,
-        onValueChange = { timeOut = it },
+        onValueChange = { viewModel.onTimeOutChanged(it) },
         label = { Text(text = "Time out") },
         singleLine = true,
         modifier = Modifier.fillMaxWidth(0.5f),
@@ -342,13 +356,14 @@ fun DefaultPreview() {
                     .weight(0.9f)
             ) {
                 item {
+                    val viewModel = viewModel<HttpEditorViewModel>(factory = IconRepositoryViewModelFactory)
                     HttpEditorTitleRow(rememberNavController(), HttpEditorViewModel(IconRepository))
-                    HttpEditorUrlRow()
-                    HttpMethodSelector()
-                    HttpCheckBox(text = "Retry")
-                    HttpCheckBox(text = "Follow redirects")
-                    HttpTimeout()
-                    HttpHeadersRow()
+                    HttpEditorUrlRow(viewModel)
+                    HttpMethodSelector(viewModel)
+                    HttpCheckBox(text = "Retry") {}
+                    HttpCheckBox(text = "Follow redirects"){}
+                    HttpTimeout(viewModel)
+                    HttpHeadersRow(viewModel)
                 }
             }
 
@@ -367,16 +382,87 @@ class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewMode
     private val _title = MutableLiveData<String>()
     val title: LiveData<String> = _title
 
+    val icon: LiveData<ImageVector> = iconRepository.icon
+
+    private val _url = MutableLiveData<String>()
+    val url: LiveData<String> = _url
+
+    private val _method = MutableLiveData<String>()
+    val method: LiveData<String> = _method
+
+    private val _retry = MutableLiveData<Boolean>()
+    val retry: LiveData<Boolean> = _retry
+
+    private val _followRedirect = MutableLiveData<Boolean>()
+    val followRedirect: LiveData<Boolean> = _followRedirect
+
+    private val _timeOut = MutableLiveData<String>()
+    val timeOut: LiveData<String> = _timeOut
+
     private val _headers = MutableLiveData<List<Header>>()
     val headers: LiveData<List<Header>> = _headers
-
-    val icon: LiveData<ImageVector> = iconRepository.icon
 
     fun onSaveIcon(icon: ImageVector) { // TODO replace ImageVector
         iconRepository.onSaveIcon(icon)
     }
 
+    fun onTitleChanged(title: String) {
+        _title.value = title
+    }
 
+    fun onUrlChanged(url: String) {
+        _url.value = url
+    }
+
+    fun onMethodSelected(methodItem: MethodItem?) {
+        methodItem?.let { _method.value = methodItem.name }
+    }
+
+    fun onRetryChanged(retry: Boolean) {
+        _retry.value = retry
+    }
+
+    fun onFollowRedirectsChanged(followRedirect: Boolean) {
+        _followRedirect.value = followRedirect
+    }
+
+    fun onTimeOutChanged(timeOut: String) {
+        _timeOut.value = timeOut
+    }
+
+    fun onHeaderAdded(header: Header) {
+        _headers.value?.let {
+            if (!it.contains(header)) {
+                _headers.value = it + header
+            }
+        }
+    }
+
+    fun onHeaderRemoved(header: Header) {
+        _headers.value?.let {
+            if (it.isNotEmpty() && it.contains(header)) {
+                _headers.value = it - header
+            }
+        }
+    }
+
+    data class ScreenState(
+        val title: String,
+        val icon: String, // this will map ImageVector,
+        val request: Request
+    )
+}
+
+data class Request(
+    val url: String,
+    val method: String,
+    val retry: Boolean,
+    val followRedirect: Boolean,
+    val headers: Map<String, String>
+)
+
+enum class Method {
+    GET, POST, PUT, PATCH,
 }
 
 @Suppress("UNCHECKED_CAST")
