@@ -43,6 +43,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.gompa.network.HttpMethod
+import com.gompa.network.Request
 import com.gompa.remotehttpcommand.navigation.ScreenDirections
 import com.gompa.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
 
@@ -257,10 +259,11 @@ fun HttpMethodSelector(viewModel: HttpEditorViewModel) {
         val list = remember {
             mutableStateOf(
                 listOf(
-                    MethodItem(Method.GET.name),
-                    MethodItem(Method.POST.name),
-                    MethodItem(Method.PUT.name),
-                    MethodItem(Method.PATCH.name)
+                    MethodItem(HttpMethod.GET.name),
+                    MethodItem(HttpMethod.POST.name),
+                    MethodItem(HttpMethod.PUT.name),
+                    MethodItem(HttpMethod.PATCH.name),
+                    MethodItem(HttpMethod.OPTIONS.name)
                 )
             )
         }
@@ -447,22 +450,9 @@ class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewMode
     }
 
     data class ScreenState(
-        val title: String,
         val icon: String, // this will map ImageVector,
         val request: Request
     )
-}
-
-data class Request(
-    val url: String,
-    val method: String,
-    val retry: Boolean,
-    val followRedirect: Boolean,
-    val headers: Map<String, String>
-)
-
-enum class Method {
-    GET, POST, PUT, PATCH,
 }
 
 @Suppress("UNCHECKED_CAST")
