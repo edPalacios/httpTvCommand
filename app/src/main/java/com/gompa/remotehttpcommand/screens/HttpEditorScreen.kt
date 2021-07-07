@@ -68,6 +68,7 @@ fun HttpEditorScreen(
             item {
                 HttpEditorTitleRow(navigationController = navController, viewModel)
                 HttpEditorUrlRow(viewModel)
+                HttpEditorBodyRow(viewModel = viewModel)
                 HttpMethodSelector(viewModel)
                 HttpCheckBox(text = "Retry") { viewModel.onRetryChanged(it) }
                 HttpCheckBox(text = "Follow redirects") { viewModel.onFollowRedirectsChanged(it) }
@@ -113,7 +114,9 @@ fun HttpHeadersRow(viewModel: HttpEditorViewModel) {
                     Spacer(Modifier.size(16.dp))
                     Column {
                         LabeledOutlinedTextField(label = "Name") { header = header.copy(name = it) }
-                        LabeledOutlinedTextField(label = "Value") { header = header.copy(value = it) }
+                        LabeledOutlinedTextField(label = "Value") {
+                            header = header.copy(value = it)
+                        }
                     }
                 },
                 confirmButton = {
@@ -221,11 +224,39 @@ fun HttpEditorTitleRow(navigationController: NavController, viewModel: HttpEdito
 
 @Composable
 fun HttpEditorUrlRow(viewModel: HttpEditorViewModel) {
+    LabeledOutlinedTextField(
+        label = "Url",
+        modifier = Modifier.fillMaxWidth(),
+        storeInput = { viewModel.onUrlChanged(it) })
+}
+
+@Composable
+fun HttpEditorBodyRow(viewModel: HttpEditorViewModel) {
+    var isChecked by remember { mutableStateOf(false) }
     Row(modifier = Modifier.fillMaxWidth()) {
+
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = { isChecked = it },
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+
+        Text(
+            text = "Request body",
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .align(Alignment.CenterVertically)
+        )
+
         LabeledOutlinedTextField(
-            label = "Url",
-            modifier = Modifier.fillMaxWidth(),
-            storeInput = { viewModel.onUrlChanged(it) })
+            label = "Body",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp),
+            storeInput = { viewModel.onRequestBodyChanged(it, isEnabled = isChecked) },
+            enabled = isChecked
+        )
+
     }
 }
 
@@ -233,6 +264,7 @@ fun HttpEditorUrlRow(viewModel: HttpEditorViewModel) {
 fun LabeledOutlinedTextField(
     label: String,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     storeInput: ((String) -> Unit)? = null
 ) {
     val input = remember { mutableStateOf("") }
@@ -243,7 +275,8 @@ fun LabeledOutlinedTextField(
             storeInput?.invoke(it)
         },
         label = { Text(label) },
-        modifier = modifier
+        modifier = modifier,
+        enabled = enabled
     )
 }
 
@@ -329,7 +362,7 @@ fun HttpCheckBox(text: String, storeState: (Boolean) -> Unit) {
 @Composable
 fun HttpTimeout(viewModel: HttpEditorViewModel) {
     Spacer(modifier = Modifier.size(16.dp))
-    val timeOut : String by viewModel.timeOut.observeAsState("30")
+    val timeOut: String by viewModel.timeOut.observeAsState("30")
     OutlinedTextField(
         value = timeOut,
         onValueChange = { viewModel.onTimeOutChanged(it) },
@@ -359,14 +392,15 @@ fun DefaultPreview() {
                     .weight(0.9f)
             ) {
                 item {
-                    val viewModel = viewModel<HttpEditorViewModel>(factory = IconRepositoryViewModelFactory)
-                    HttpEditorTitleRow(rememberNavController(), HttpEditorViewModel(IconRepository))
-                    HttpEditorUrlRow(viewModel)
-                    HttpMethodSelector(viewModel)
-                    HttpCheckBox(text = "Retry") {}
-                    HttpCheckBox(text = "Follow redirects"){}
-                    HttpTimeout(viewModel)
-                    HttpHeadersRow(viewModel)
+//                    val viewModel = HttpEditorViewModel(IconRepository)
+//                    HttpEditorTitleRow(rememberNavController(), HttpEditorViewModel(IconRepository))
+//                    HttpEditorUrlRow(viewModel)
+//                    HttpEditorBodyRow()
+//                    HttpMethodSelector(viewModel)
+//                    HttpCheckBox(text = "Retry") {}
+//                    HttpCheckBox(text = "Follow redirects") {}
+//                    HttpTimeout(viewModel)
+//                    HttpHeadersRow(viewModel)
                 }
             }
 
@@ -447,6 +481,10 @@ class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewMode
                 _headers.value = it - header
             }
         }
+    }
+
+    fun onRequestBodyChanged(requestBody: String, isEnabled: Boolean = false) {
+
     }
 
     data class ScreenState(
