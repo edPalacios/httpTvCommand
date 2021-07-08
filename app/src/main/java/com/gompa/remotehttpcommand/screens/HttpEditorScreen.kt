@@ -75,7 +75,11 @@ fun HttpEditorScreen(
                 HttpHeadersRow(viewModel)
             }
         }
-        HttpBottomRow(context = context, this)
+        HttpBottomRow(
+            context = context,
+            this,
+            onSave = { viewModel.saveRequest() },
+            onDelete = { viewModel.deleteRequest() })
     }
 
 }
@@ -175,27 +179,32 @@ private fun AddHeader(isClicked: MutableState<Boolean>) {
 }
 
 @Composable
-fun HttpBottomRow(context: Context, columnScope: ColumnScope) {
+fun HttpBottomRow(
+    context: Context,
+    columnScope: ColumnScope,
+    onSave: () -> Unit,
+    onDelete: () -> Unit
+) {
     columnScope.apply {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
-            HttpButton(text = "Delete", context = context, rowScope = this)
-            HttpButton(text = "Save", context = context, rowScope = this)
+            HttpButton(text = "Delete", context = context, rowScope = this) { onSave() }
+            HttpButton(text = "Save", context = context, rowScope = this) { onDelete() }
         }
     }
 }
 
 @Composable
-fun HttpButton(text: String, context: Context, rowScope: RowScope) {
+fun HttpButton(text: String, context: Context, rowScope: RowScope, onClick: () -> Unit) {
     rowScope.apply {
         Button(
             modifier = Modifier
                 .padding(16.dp)
                 .weight(1f),
-            onClick = { Toast.makeText(context, "save and close", Toast.LENGTH_LONG).show() }) {
+            onClick = { onClick() }) {
             Text(text = text)
         }
     }
@@ -403,7 +412,7 @@ fun DefaultPreview() {
                 }
             }
 
-            HttpBottomRow(context = context, columnScope = this)
+            HttpBottomRow(context = context, columnScope = this, {}, {})
         }
     }
 }
@@ -471,6 +480,14 @@ class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewMode
 
     fun onRequestBodyChanged(body: String, isEnabled: Boolean = false) {
         requestBody = RequestBody(body, isEnabled)
+    }
+
+    fun saveRequest() {
+        TODO("Not yet implemented - save in room")
+    }
+
+    fun deleteRequest() {
+        TODO("Not yet implemented - if exist delete in room")
     }
 
     data class ScreenState(
