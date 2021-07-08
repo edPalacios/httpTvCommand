@@ -42,7 +42,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.gompa.network.HttpMethod
 import com.gompa.network.Request
 import com.gompa.remotehttpcommand.navigation.ScreenDirections
@@ -413,54 +412,45 @@ data class Header(val name: String = "", val value: String = "")
 
 data class MethodItem(val name: String, var isSelected: Boolean = false)
 
+data class RequestBody(val body: String = "", val isEnabled: Boolean = false)
 
 class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewModel() {
-
-    private val _title = MutableLiveData<String>()
-    val title: LiveData<String> = _title
-
-    val icon: LiveData<ImageVector> = iconRepository.icon
-
-    private val _url = MutableLiveData<String>()
-    val url: LiveData<String> = _url
-
-    private val _method = MutableLiveData<String>()
-    val method: LiveData<String> = _method
-
-    private val _retry = MutableLiveData<Boolean>()
-    val retry: LiveData<Boolean> = _retry
-
-    private val _followRedirect = MutableLiveData<Boolean>()
-    val followRedirect: LiveData<Boolean> = _followRedirect
 
     private val _timeOut = MutableLiveData<String>()
     val timeOut: LiveData<String> = _timeOut
 
-    private val _headers = MutableLiveData<List<Header>>()
-    val headers: LiveData<List<Header>> = _headers
+    val icon: LiveData<ImageVector> = iconRepository.icon
+
+    private var title: String = ""
+    private var url: String = ""
+    private var method: String = ""
+    private var retry: Boolean = false
+    private var followRedirect: Boolean = false
+    private var headers: MutableList<Header> = mutableListOf()
+    private var requestBody: RequestBody = RequestBody()
 
     fun onSaveIcon(icon: ImageVector) { // TODO replace ImageVector
         iconRepository.onSaveIcon(icon)
     }
 
     fun onTitleChanged(title: String) {
-        _title.value = title
+        this.title = title
     }
 
     fun onUrlChanged(url: String) {
-        _url.value = url
+        this.url = url
     }
 
     fun onMethodSelected(methodItem: MethodItem?) {
-        methodItem?.let { _method.value = methodItem.name }
+        methodItem?.let { method = methodItem.name }
     }
 
     fun onRetryChanged(retry: Boolean) {
-        _retry.value = retry
+        this.retry = retry
     }
 
     fun onFollowRedirectsChanged(followRedirect: Boolean) {
-        _followRedirect.value = followRedirect
+        this.followRedirect = followRedirect
     }
 
     fun onTimeOutChanged(timeOut: String) {
@@ -468,23 +458,19 @@ class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewMode
     }
 
     fun onHeaderAdded(header: Header) {
-        _headers.value?.let {
-            if (!it.contains(header)) {
-                _headers.value = it + header
-            }
+        if (!headers.contains(header)) {
+            headers.add(header)
         }
     }
 
     fun onHeaderRemoved(header: Header) {
-        _headers.value?.let {
-            if (it.isNotEmpty() && it.contains(header)) {
-                _headers.value = it - header
-            }
+        if (headers.isNotEmpty() && headers.contains(header)) {
+            headers.remove(header)
         }
     }
 
-    fun onRequestBodyChanged(requestBody: String, isEnabled: Boolean = false) {
-
+    fun onRequestBodyChanged(body: String, isEnabled: Boolean = false) {
+        requestBody = RequestBody(body, isEnabled)
     }
 
     data class ScreenState(
