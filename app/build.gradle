@@ -3,6 +3,7 @@ import com.gompa.buildsrc.Libs
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -19,6 +20,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
+        }
+        // room compiler options https://developer.android.com/jetpack/androidx/releases/room?gclid=Cj0KCQjwiqWHBhD2ARIsAPCDzan97KZe8ASHDlzocbrwlm2trGyvFz3c3r6-E3XkxQBvXM0awjn3XxAaAqEyEALw_wcB&gclsrc=aw.ds#compiler-options
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
         }
     }
 
@@ -61,6 +71,11 @@ dependencies {
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.uiKtx
     implementation Libs.material
+
+    implementation Libs.Room.runTime
+    kapt Libs.Room.roomKapt
+    implementation Libs.Room.roomKtx
+    testImplementation Libs.Room.roomTest
 
     implementation Libs.AndroidX.Compose.layout
     implementation Libs.AndroidX.Compose.material

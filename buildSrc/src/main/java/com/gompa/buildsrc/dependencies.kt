@@ -28,6 +28,15 @@ object Libs {
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
     }
 
+    object Room {
+        const val version = "2.3.0"
+        const val runTime = "androidx.room:room-runtime:$version"
+        const val roomKapt = "androidx.room:room-compiler:$version"
+        const val roomKtx = "androidx.room:room-ktx:$version"
+        const val roomTest = "androidx.room:room-testing:$version"
+
+    }
+
     object Network {
 
         object Okhttp {
