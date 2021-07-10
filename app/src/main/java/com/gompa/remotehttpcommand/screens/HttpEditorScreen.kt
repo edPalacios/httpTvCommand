@@ -42,6 +42,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.gompa.network.HttpMethod
 import com.gompa.network.Request
 import com.gompa.remotehttpcommand.navigation.ScreenDirections
@@ -400,15 +401,15 @@ fun DefaultPreview() {
                     .weight(0.9f)
             ) {
                 item {
-//                    val viewModel = HttpEditorViewModel(IconRepository)
-//                    HttpEditorTitleRow(rememberNavController(), HttpEditorViewModel(IconRepository))
-//                    HttpEditorUrlRow(viewModel)
-//                    HttpEditorBodyRow()
-//                    HttpMethodSelector(viewModel)
-//                    HttpCheckBox(text = "Retry") {}
-//                    HttpCheckBox(text = "Follow redirects") {}
-//                    HttpTimeout(viewModel)
-//                    HttpHeadersRow(viewModel)
+                    val viewModel = HttpEditorViewModel(IconRepository)
+                    HttpEditorTitleRow(rememberNavController(), HttpEditorViewModel(IconRepository))
+                    HttpEditorUrlRow(viewModel)
+                    HttpEditorBodyRow(viewModel)
+                    HttpMethodSelector(viewModel)
+                    HttpCheckBox(text = "Retry") {}
+                    HttpCheckBox(text = "Follow redirects") {}
+                    HttpTimeout(viewModel)
+                    HttpHeadersRow(viewModel)
                 }
             }
 
