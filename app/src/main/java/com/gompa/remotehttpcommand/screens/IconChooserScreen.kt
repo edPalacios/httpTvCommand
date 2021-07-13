@@ -16,10 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gompa.remotehttpcommand.screens.editor.IconRepositoryViewModelFactory
+import com.gompa.remotehttpcommand.screens.editor.RequestEditorViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun IconChooserScreen(navController: NavController, viewModel: HttpEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)) {
+fun IconChooserScreen(navController: NavController, viewModel: RequestEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)) {
     // TODO load icons from some library or similar to allow customization
     Scaffold(
         topBar = { Toolbar(navController) }
@@ -31,7 +33,7 @@ fun IconChooserScreen(navController: NavController, viewModel: HttpEditorViewMod
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Icons(navController: NavController, viewModel: HttpEditorViewModel) {
+private fun Icons(navController: NavController, viewModel: RequestEditorViewModel) {
     LazyVerticalGrid(
         cells = GridCells.Adaptive(50.dp),
         modifier = Modifier.fillMaxSize()

@@ -1,7 +1,6 @@
-package com.gompa.remotehttpcommand.screens
+package com.gompa.remotehttpcommand.screens.editor
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
@@ -49,9 +48,9 @@ import com.gompa.remotehttpcommand.navigation.ScreenDirections
 import com.gompa.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
 
 @Composable
-fun HttpEditorScreen(
+fun RequestEditorScreen(
     navController: NavController,
-    viewModel: HttpEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)
+    viewModel: RequestEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)
 ) {
 //    Button(onClick = { navController.popBackStack() }) { // TODO handle navigation
 
@@ -66,17 +65,17 @@ fun HttpEditorScreen(
             Modifier.weight(0.9f)
         ) {
             item {
-                HttpEditorTitleRow(navigationController = navController, viewModel)
-                HttpEditorUrlRow(viewModel)
-                HttpEditorBodyRow(viewModel = viewModel)
-                HttpMethodSelector(viewModel)
-                HttpCheckBox(text = "Retry") { viewModel.onRetryChanged(it) }
-                HttpCheckBox(text = "Follow redirects") { viewModel.onFollowRedirectsChanged(it) }
-                HttpTimeout(viewModel)
-                HttpHeadersRow(viewModel)
+                RequestEditorTitleRow(navigationController = navController, viewModel)
+                RequestEditorUrlRow(viewModel)
+                RequestEditorBodyRow(viewModel = viewModel)
+                RequestMethodSelector(viewModel)
+                RequestCheckBox(text = "Retry") { viewModel.onRetryChanged(it) }
+                RequestCheckBox(text = "Follow redirects") { viewModel.onFollowRedirectsChanged(it) }
+                RequestTimeout(viewModel)
+                RequestHeadersRow(viewModel)
             }
         }
-        HttpBottomRow(
+        RequestBottomRow(
             context = context,
             this,
             onSave = { viewModel.saveRequest() },
@@ -87,7 +86,7 @@ fun HttpEditorScreen(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HttpHeadersRow(viewModel: HttpEditorViewModel) {
+fun RequestHeadersRow(viewModel: RequestEditorViewModel) {
     Spacer(Modifier.size(16.dp))
 
     val headers = remember { mutableStateListOf<Header>() } // TODO check if we can get rid of this
@@ -180,7 +179,7 @@ private fun AddHeader(isClicked: MutableState<Boolean>) {
 }
 
 @Composable
-fun HttpBottomRow(
+fun RequestBottomRow(
     context: Context,
     columnScope: ColumnScope,
     onSave: () -> Unit,
@@ -192,14 +191,14 @@ fun HttpBottomRow(
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
-            HttpButton(text = "Delete", context = context, rowScope = this) { onSave() }
-            HttpButton(text = "Save", context = context, rowScope = this) { onDelete() }
+            RequestButton(text = "Delete", context = context, rowScope = this) { onSave() }
+            RequestButton(text = "Save", context = context, rowScope = this) { onDelete() }
         }
     }
 }
 
 @Composable
-fun HttpButton(text: String, context: Context, rowScope: RowScope, onClick: () -> Unit) {
+fun RequestButton(text: String, context: Context, rowScope: RowScope, onClick: () -> Unit) {
     rowScope.apply {
         Button(
             modifier = Modifier
@@ -212,7 +211,7 @@ fun HttpButton(text: String, context: Context, rowScope: RowScope, onClick: () -
 }
 
 @Composable
-fun HttpEditorTitleRow(navigationController: NavController, viewModel: HttpEditorViewModel) {
+fun RequestEditorTitleRow(navigationController: NavController, viewModel: RequestEditorViewModel) {
     Row {
         LabeledOutlinedTextField(label = "Title", storeInput = { viewModel.onTitleChanged(it) })
 
@@ -232,7 +231,7 @@ fun HttpEditorTitleRow(navigationController: NavController, viewModel: HttpEdito
 }
 
 @Composable
-fun HttpEditorUrlRow(viewModel: HttpEditorViewModel) {
+fun RequestEditorUrlRow(viewModel: RequestEditorViewModel) {
     LabeledOutlinedTextField(
         label = "Url",
         modifier = Modifier.fillMaxWidth(),
@@ -240,7 +239,7 @@ fun HttpEditorUrlRow(viewModel: HttpEditorViewModel) {
 }
 
 @Composable
-fun HttpEditorBodyRow(viewModel: HttpEditorViewModel) {
+fun RequestEditorBodyRow(viewModel: RequestEditorViewModel) {
     var isChecked by remember { mutableStateOf(false) }
     Row(modifier = Modifier.fillMaxWidth()) {
 
@@ -290,7 +289,7 @@ fun LabeledOutlinedTextField(
 }
 
 @Composable
-fun HttpMethodSelector(viewModel: HttpEditorViewModel) {
+fun RequestMethodSelector(viewModel: RequestEditorViewModel) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -326,7 +325,7 @@ fun HttpMethodSelector(viewModel: HttpEditorViewModel) {
 fun MethodText(
     item: MethodItem,
     list: MutableState<List<MethodItem>>,
-    viewModel: HttpEditorViewModel
+    viewModel: RequestEditorViewModel
 ) {
 
     val color by animateColorAsState(
@@ -353,7 +352,7 @@ fun MethodText(
 }
 
 @Composable
-fun HttpCheckBox(text: String, storeState: (Boolean) -> Unit) {
+fun RequestCheckBox(text: String, storeState: (Boolean) -> Unit) {
     val isChecked = remember { mutableStateOf(false) }
     Row {
         Checkbox(
@@ -369,7 +368,7 @@ fun HttpCheckBox(text: String, storeState: (Boolean) -> Unit) {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HttpTimeout(viewModel: HttpEditorViewModel) {
+fun RequestTimeout(viewModel: RequestEditorViewModel) {
     Spacer(modifier = Modifier.size(16.dp))
     val timeOut: String by viewModel.timeOut.observeAsState("30")
     OutlinedTextField(
@@ -401,19 +400,22 @@ fun DefaultPreview() {
                     .weight(0.9f)
             ) {
                 item {
-                    val viewModel = HttpEditorViewModel(IconRepository)
-                    HttpEditorTitleRow(rememberNavController(), HttpEditorViewModel(IconRepository))
-                    HttpEditorUrlRow(viewModel)
-                    HttpEditorBodyRow(viewModel)
-                    HttpMethodSelector(viewModel)
-                    HttpCheckBox(text = "Retry") {}
-                    HttpCheckBox(text = "Follow redirects") {}
-                    HttpTimeout(viewModel)
-                    HttpHeadersRow(viewModel)
+                    val viewModel = RequestEditorViewModel(IconRepository)
+                    RequestEditorTitleRow(rememberNavController(), RequestEditorViewModel(
+                        IconRepository
+                    )
+                    )
+                    RequestEditorUrlRow(viewModel)
+                    RequestEditorBodyRow(viewModel)
+                    RequestMethodSelector(viewModel)
+                    RequestCheckBox(text = "Retry") {}
+                    RequestCheckBox(text = "Follow redirects") {}
+                    RequestTimeout(viewModel)
+                    RequestHeadersRow(viewModel)
                 }
             }
 
-            HttpBottomRow(context = context, columnScope = this, {}, {})
+            RequestBottomRow(context = context, columnScope = this, {}, {})
         }
     }
 }
@@ -424,12 +426,12 @@ data class MethodItem(val name: String, var isSelected: Boolean = false)
 
 data class RequestBody(val body: String = "", val isEnabled: Boolean = false)
 
-class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewModel() {
+class RequestEditorViewModel(private val iconRepository: IconRepository) : ViewModel() {
 
     private val _timeOut = MutableLiveData<String>()
     val timeOut: LiveData<String> = _timeOut
 
-    val icon: LiveData<ImageVector> = iconRepository.icon
+    val icon: LiveData<ImageVector> = IconRepository.icon
 
     private var title: String = ""
     private var url: String = ""
@@ -440,7 +442,7 @@ class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewMode
     private var requestBody: RequestBody = RequestBody()
 
     fun onSaveIcon(icon: ImageVector) { // TODO replace ImageVector
-        iconRepository.onSaveIcon(icon)
+        IconRepository.onSaveIcon(icon)
     }
 
     fun onTitleChanged(title: String) {
@@ -500,8 +502,8 @@ class HttpEditorViewModel(private val iconRepository: IconRepository) : ViewMode
 @Suppress("UNCHECKED_CAST")
 object IconRepositoryViewModelFactory : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HttpEditorViewModel::class.java)) {
-            return HttpEditorViewModel(IconRepository) as T
+        if (modelClass.isAssignableFrom(RequestEditorViewModel::class.java)) {
+            return RequestEditorViewModel(IconRepository) as T
         }
         throw IllegalArgumentException("Cannot create view model from class: $modelClass")
     }
