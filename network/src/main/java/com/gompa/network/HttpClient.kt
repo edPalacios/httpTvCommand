@@ -1,5 +1,7 @@
 package com.gompa.network
 
+import com.gompa.models.Request
+import com.gompa.models.Response
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -7,28 +9,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit.SECONDS
 import okhttp3.Request as OkRequest
-
-
-data class Request(
-    val title: String = "Request",
-    val url: String,
-    val method: HttpMethod = HttpMethod.GET,
-    val timeout: Long = 30,
-    val retry: Boolean = true,
-    val followRedir: Boolean = true,
-    val headers: Map<String, String> = emptyMap(),
-    val body: String? = null,
-)
-
-data class Response(val code: Int, val body: String?, val headers: Map<String, String> = emptyMap())
-
-enum class HttpMethod {
-    GET,
-    POST,
-    PATCH,
-    PUT,
-    OPTIONS,
-}
 
 fun executeOkHttp(request: Request): Response {
     val client = OkHttpClient.Builder()

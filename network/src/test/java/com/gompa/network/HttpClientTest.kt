@@ -1,7 +1,6 @@
 package com.gompa.network
 
-import com.gompa.network.Request
-import com.gompa.network.executeOkHttp
+import com.gompa.models.Request
 import org.junit.Test
 
 class HttpClientTest {

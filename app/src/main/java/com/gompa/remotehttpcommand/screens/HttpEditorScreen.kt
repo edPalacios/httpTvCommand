@@ -43,8 +43,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.gompa.network.HttpMethod
-import com.gompa.network.Request
+import com.gompa.models.HttpMethod
+import com.gompa.models.Request
 import com.gompa.remotehttpcommand.navigation.ScreenDirections
 import com.gompa.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
 

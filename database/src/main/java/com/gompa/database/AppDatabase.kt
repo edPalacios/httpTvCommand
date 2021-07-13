@@ -5,9 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.gompa.database.dao.HttpDao
-import com.gompa.database.entities.HttpEntity
+import com.gompa.database.entities.RequestEntity
 
-@Database(entities = [HttpEntity::class], version = 1)
+@Database(entities = [RequestEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun httpDao(): HttpDao
 }

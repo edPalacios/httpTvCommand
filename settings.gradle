@@ -10,3 +10,4 @@ rootProject.name = "RemoteHttpCommand"
 include ':app'
 include ':network'
 include ':database'
+include ':models'
