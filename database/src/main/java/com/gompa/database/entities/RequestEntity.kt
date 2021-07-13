@@ -7,7 +7,7 @@ import androidx.room.TypeConverters
 import com.gompa.database.converters.MapConverter
 import com.gompa.models.Request
 
-@TypeConverters(MapConverter::class)
+@TypeConverters(MapConverter::class) // TODO pending to add icon property
 @Entity
 data class RequestEntity(
     @Embedded
