@@ -97,6 +97,10 @@ object Libs {
             }
 
             const val espressoCore = "androidx.test.espresso:espresso-core:3.3.0"
+            //For runBlockingTest, CoroutineDispatcher etc.
+            const val coroutinesRunBlocking = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1"
+            //For InstantTaskExecutorRule
+            const val instantTaskExecutor = "androidx.arch.core:core-testing:2.1.0"
         }
 
         object Lifecycle {
