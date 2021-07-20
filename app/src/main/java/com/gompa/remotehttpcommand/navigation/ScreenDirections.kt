@@ -17,4 +17,9 @@ object ScreenDirections {
         override val arguments: List<NamedNavArgument> = emptyList()
         override val destination: String = "httpEditor"
     }
+
+    val iconChooser = object : Direction {
+        override val arguments: List<NamedNavArgument> = emptyList()
+        override val destination: String = "iconChooser"
+    }
 }
