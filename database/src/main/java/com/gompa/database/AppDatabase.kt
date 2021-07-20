@@ -16,15 +16,20 @@ abstract class AppDatabase : RoomDatabase() {
 class Database(context: Context) {
 
     init {
-        db = create(context)
+        create(context).apply {
+            httpDao = httpDao()
+        }
     }
 
-    private fun create(context: Context) = Room.databaseBuilder(
-        context,
-        AppDatabase::class.java, "http-database"
-    ).build()
+    private fun create(context: Context): AppDatabase {
+        val databaseBuilder = Room.databaseBuilder(
+            context,
+            AppDatabase::class.java, "http-database"
+        )
+        return databaseBuilder.build()
+    }
 
     companion object {
-        lateinit var db : AppDatabase
+        lateinit var httpDao: RequestDao
     }
 }

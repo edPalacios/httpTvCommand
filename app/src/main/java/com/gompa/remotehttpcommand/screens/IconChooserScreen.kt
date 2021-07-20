@@ -16,12 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.gompa.remotehttpcommand.screens.editor.IconRepositoryViewModelFactory
+import com.gompa.remotehttpcommand.screens.editor.RequestEditorViewModelFactory
 import com.gompa.remotehttpcommand.screens.editor.RequestEditorViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun IconChooserScreen(navController: NavController, viewModel: RequestEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)) {
+fun IconChooserScreen(navController: NavController, viewModel: RequestEditorViewModel = viewModel(factory = RequestEditorViewModelFactory)) {
     // TODO load icons from some library or similar to allow customization
     Scaffold(
         topBar = { Toolbar(navController) }

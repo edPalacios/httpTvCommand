@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -35,22 +34,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.gompa.models.HttpMethod
-import com.gompa.models.Request
 import com.gompa.remotehttpcommand.navigation.ScreenDirections
 import com.gompa.remotehttpcommand.ui.theme.RemoteHttpCommandTheme
 
 @Composable
 fun RequestEditorScreen(
     navController: NavController,
-    viewModel: RequestEditorViewModel = viewModel(factory = IconRepositoryViewModelFactory)
+    viewModel: RequestEditorViewModel = viewModel(factory = RequestEditorViewModelFactory)
 ) {
 //    Button(onClick = { navController.popBackStack() }) { // TODO handle navigation
 
@@ -78,7 +72,7 @@ fun RequestEditorScreen(
         RequestBottomRow(
             context = context,
             this,
-            onSave = { viewModel.saveRequest() },
+            onSave = { viewModel.saveRequest{ navController.popBackStack() } },
             onDelete = { viewModel.deleteRequest() })
     }
 
@@ -191,8 +185,8 @@ fun RequestBottomRow(
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
-            RequestButton(text = "Delete", context = context, rowScope = this) { onSave() }
-            RequestButton(text = "Save", context = context, rowScope = this) { onDelete() }
+            RequestButton(text = "Save", context = context, rowScope = this) { onSave() }
+            RequestButton(text = "Delete", context = context, rowScope = this) { onDelete() }
         }
     }
 }
@@ -400,11 +394,8 @@ fun DefaultPreview() {
                     .weight(0.9f)
             ) {
                 item {
-                    val viewModel = RequestEditorViewModel(IconRepository)
-                    RequestEditorTitleRow(rememberNavController(), RequestEditorViewModel(
-                        IconRepository
-                    )
-                    )
+                    val viewModel = RequestEditorViewModel(RequestEditorModule.iconRepository(), RequestEditorModule.requestRepository())
+                    RequestEditorTitleRow(rememberNavController(), viewModel)
                     RequestEditorUrlRow(viewModel)
                     RequestEditorBodyRow(viewModel)
                     RequestMethodSelector(viewModel)
@@ -418,105 +409,4 @@ fun DefaultPreview() {
             RequestBottomRow(context = context, columnScope = this, {}, {})
         }
     }
-}
-
-data class Header(val name: String = "", val value: String = "")
-
-data class MethodItem(val name: String, var isSelected: Boolean = false)
-
-data class RequestBody(val body: String = "", val isEnabled: Boolean = false)
-
-class RequestEditorViewModel(private val iconRepository: IconRepository) : ViewModel() {
-
-    private val _timeOut = MutableLiveData<String>()
-    val timeOut: LiveData<String> = _timeOut
-
-    val icon: LiveData<ImageVector> = IconRepository.icon
-
-    private var title: String = ""
-    private var url: String = ""
-    private var method: String = ""
-    private var retry: Boolean = false
-    private var followRedirect: Boolean = false
-    private var headers: MutableList<Header> = mutableListOf()
-    private var requestBody: RequestBody = RequestBody()
-
-    fun onSaveIcon(icon: ImageVector) { // TODO replace ImageVector
-        IconRepository.onSaveIcon(icon)
-    }
-
-    fun onTitleChanged(title: String) {
-        this.title = title
-    }
-
-    fun onUrlChanged(url: String) {
-        this.url = url
-    }
-
-    fun onMethodSelected(methodItem: MethodItem?) {
-        methodItem?.let { method = methodItem.name }
-    }
-
-    fun onRetryChanged(retry: Boolean) {
-        this.retry = retry
-    }
-
-    fun onFollowRedirectsChanged(followRedirect: Boolean) {
-        this.followRedirect = followRedirect
-    }
-
-    fun onTimeOutChanged(timeOut: String) {
-        _timeOut.value = timeOut
-    }
-
-    fun onHeaderAdded(header: Header) {
-        if (!headers.contains(header)) {
-            headers.add(header)
-        }
-    }
-
-    fun onHeaderRemoved(header: Header) {
-        if (headers.isNotEmpty() && headers.contains(header)) {
-            headers.remove(header)
-        }
-    }
-
-    fun onRequestBodyChanged(body: String, isEnabled: Boolean = false) {
-        requestBody = RequestBody(body, isEnabled)
-    }
-
-    fun saveRequest() {
-        TODO("Not yet implemented - save in room")
-    }
-
-    fun deleteRequest() {
-        TODO("Not yet implemented - if exist delete in room")
-    }
-
-    data class ScreenState(
-        val icon: String, // this will map ImageVector,
-        val request: Request
-    )
-}
-
-@Suppress("UNCHECKED_CAST")
-object IconRepositoryViewModelFactory : ViewModelProvider.NewInstanceFactory() {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(RequestEditorViewModel::class.java)) {
-            return RequestEditorViewModel(IconRepository) as T
-        }
-        throw IllegalArgumentException("Cannot create view model from class: $modelClass")
-    }
-}
-
-
-// TODO Dummy repository in memory to speed up things. This should be done with Room keeping the ref of the icon from a lib
-object IconRepository : LiveData<ImageVector>() {
-    private val _icon = MutableLiveData<ImageVector>() // TODO replace VectorDrawable
-    val icon: LiveData<ImageVector> = _icon
-
-    fun onSaveIcon(icon: ImageVector) {
-        _icon.value = icon
-    }
-
 }
