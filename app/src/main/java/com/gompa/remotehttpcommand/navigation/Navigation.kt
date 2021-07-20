@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.gompa.remotehttpcommand.screens.HttpEditorScreen
+import com.gompa.remotehttpcommand.screens.editor.RequestEditorScreen
 import com.gompa.remotehttpcommand.screens.IconChooserScreen
 import com.gompa.remotehttpcommand.screens.RemoteCommandScreen
 
@@ -16,7 +16,7 @@ fun Navigation() {
             RemoteCommandScreen(navController = navController)
         }
         composable(route = ScreenDirections.httpEditor.destination) {
-            HttpEditorScreen(navController = navController)
+            RequestEditorScreen(navController = navController)
         }
 
         composable(route = ScreenDirections.iconChooser.destination) {

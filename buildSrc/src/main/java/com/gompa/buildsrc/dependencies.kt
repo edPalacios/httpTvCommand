@@ -28,6 +28,15 @@ object Libs {
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
     }
 
+    object Room {
+        const val version = "2.3.0"
+        const val runTime = "androidx.room:room-runtime:$version"
+        const val roomKapt = "androidx.room:room-compiler:$version"
+        const val roomKtx = "androidx.room:room-ktx:$version"
+        const val roomTest = "androidx.room:room-testing:$version"
+
+    }
+
     object Network {
 
         object Okhttp {
@@ -35,6 +44,13 @@ object Libs {
             const val okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
             const val okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
         }
+    }
+
+    object Jackson {
+        private const val version = "2.12.4"
+        const val core = "com.fasterxml.jackson.core:jackson-core:${version}"
+        const val annotations = "com.fasterxml.jackson.core:jackson-annotations:${version}"
+        const val databind = "com.fasterxml.jackson.core:jackson-databind:${version}"
     }
 
     object AndroidX {
@@ -81,6 +97,10 @@ object Libs {
             }
 
             const val espressoCore = "androidx.test.espresso:espresso-core:3.3.0"
+            //For runBlockingTest, CoroutineDispatcher etc.
+            const val coroutinesRunBlocking = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1"
+            //For InstantTaskExecutorRule
+            const val instantTaskExecutor = "androidx.arch.core:core-testing:2.1.0"
         }
 
         object Lifecycle {

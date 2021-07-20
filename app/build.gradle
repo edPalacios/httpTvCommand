@@ -3,6 +3,7 @@ import com.gompa.buildsrc.Libs
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -49,6 +50,8 @@ android {
 dependencies {
 
     implementation project(":network")
+    implementation project(":database")
+    implementation project(":models")
 
     implementation Libs.Kotlin.stdlib
     implementation Libs.Coroutines.android
